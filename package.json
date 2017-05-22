@@ -1,0 +1,34 @@
+{
+  "name": "bitcoin-cli",
+  "version": "0.0.1",
+  "description": "An offline Bitcoin key generator for use with air-gapped wallets",
+  "main": "src/index.js",
+  "bin": {
+    "bitcoin-cli": "src/index.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/masonicGIT/bitcoin-cli.git"
+  },
+  "keywords": [
+    "bitcoin",
+    "cli"
+  ],
+  "author": "Mason Borda",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/masonicGIT/bitcoin-cli/issues"
+  },
+  "homepage": "https://github.com/masonicGIT/bitcoin-cli#readme",
+  "dependencies": {
+    "bitcoinjs-lib": "3.0.3",
+    "chalk": "1.1.3",
+    "co": "4.6.0",
+    "co-prompt": "1.0.0",
+    "commander": "2.9.0",
+    "sjcl": "1.0.6"
+  }
+}
