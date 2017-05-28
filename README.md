@@ -6,9 +6,9 @@ An offline Bitcoin key generator for use with air-gapped wallets
 Install the package globally for native command line use.
 
     ```bash
-        git clone https://github.com/masonicGIT/bitcoin-cli
-        cd bitcoin-cli
-        npm install -g
+    git clone https://github.com/masonicGIT/bitcoin-cli
+    cd bitcoin-cli
+    npm install -g
     ```
 
 # Multi-Signature Wallets with Electrum
