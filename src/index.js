@@ -6,9 +6,13 @@ const co = require('co');
 const fs = require('fs');
 const sjcl = require('sjcl');
 const chalk = require('chalk');
+const Promise = require('Bluebird');
 const prompt = require('co-prompt');
 const program = require('commander');
 const bitcoin = require('bitcoinjs-lib');
+
+const promisifyAll = Promise.promisifyAll;
+const moreEntropy = promisifyAll(require('more-entropy'));
 
 const writeFile = (filename, data) => {
   fs.writeFileSync(filename, data);
@@ -16,23 +20,31 @@ const writeFile = (filename, data) => {
   process.exit(1);
 }
 
+const getEntropy = () => {
+    let generator = new moreEntropy.Generator();
+    return generator.generateAsync(192)
+    .catch(function(response) {
+      // The generate library always returns a success as an failure
+      return response;
+    })
+}
+
 const create = () => {
   co(function *() {
-    let password = yield prompt.password(chalk.yellow('Enter password: '));
-    let confirmPassword = yield prompt.password(chalk.yellow('Confirm password: '));
+   let password = yield prompt.password(chalk.yellow('Enter password: '));
+   let confirmPassword = yield prompt.password(chalk.yellow('Confirm password: '));
 
-    if (password !== confirmPassword) {
+   if (password !== confirmPassword) {
       console.error(chalk.red('\nPasswords do not match. Please try again.'));
       process.exit(1);
     }
 
-    let keyPair = bitcoin.ECPair.makeRandom();
-    let privateKey = keyPair.toWIF();
-    let publicKey = keyPair.getAddress();
-
+    const entropy = yield getEntropy();
+    const master = bitcoin.HDNode.fromSeedBuffer(new Buffer(entropy));
+    let privateKey = master.toBase58();
+    let publicKey = master.neutered().toBase58();
     let encryptedPrivateKey = sjcl.encrypt(password, privateKey);
-
-    writeFile('./' + publicKey + '.key', encryptedPrivateKey);
+    return writeFile('./' + publicKey + '.key', privateKey + '\n' + publicKey + '\n' + encryptedPrivateKey);
   })
 }
 
@@ -82,8 +94,8 @@ program.command('wallet [cmd]')
          if (!cmd) {
            program.help();
            process.exit(1);
-	 }
-         create();	 
+	       }
+         create();
        }) 
 
 program.command('encrypt')
